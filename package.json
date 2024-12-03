@@ -13,8 +13,8 @@
   "main": "./extension.js",
   "contributes": {
     "commands": [{
-      "command": "themzway.helloWorld",
-      "title": "Hello World"
+      "command": "themzway.ama",
+      "title": "Ask me anything"
     }]
   },
   "scripts": {
