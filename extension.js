@@ -1,36 +1,85 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-
-/**
- * @param {vscode.ExtensionContext} context
- */
 function activate(context) {
+    // Existing command: Create multiple C++ files
+    let createFilesCommand = vscode.commands.registerCommand('themzway.createFiles', async () => {
+        const numFilesInput = await vscode.window.showInputBox({ 
+            prompt: 'Enter the number of files to create', 
+            value: '' 
+        });
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "themzway" is now active!');
+        const numFiles = numFilesInput && !isNaN(Number(numFilesInput)) ? Number(numFilesInput) : 1;
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('themzway.helloWorld', function () {
-		// The code you place here will be executed every time your command is executed
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (workspaceFolders) {
+            const rootPath = workspaceFolders[0].uri.fsPath;
 
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from themzway!');
-	});
+            for (let i = 1; i <= numFiles; ++i) {
+                const fileName = path.join(rootPath, `Ques_${i}.cpp`);
+                const fileContent = `#include <iostream>\nusing namespace std;\n\nint main() {\n    return 0;\n}`;
 
-	context.subscriptions.push(disposable);
+                fs.writeFileSync(fileName, fileContent);
+            }
+
+            vscode.window.showInformationMessage(`${numFiles} file(s) created successfully.`);
+        } else {
+            vscode.window.showErrorMessage('No workspace folder is open.');
+        }
+    });
+
+    // New command: Ask Me Anything (ama)
+    let amaCommand = vscode.commands.registerCommand('themzway.ama', async () => {
+        const levels = ['Beginner', 'Intermediate', 'Expert'];
+        const selectedLevel = await vscode.window.showQuickPick(levels, {
+            placeHolder: 'Select the difficulty level'
+        });
+
+        if (!selectedLevel) {
+            vscode.window.showErrorMessage('Please select a difficulty level.');
+            return;
+        }
+
+        const numQuestionsInput = await vscode.window.showInputBox({
+            prompt: `Enter the number of ${selectedLevel} questions to generate`,
+            value: ''
+        });
+
+        const numQuestions = numQuestionsInput && !isNaN(Number(numQuestionsInput)) ? Number(numQuestionsInput) : 1;
+
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (workspaceFolders) {
+            const rootPath = workspaceFolders[0].uri.fsPath;
+
+            for (let i = 1; i <= numQuestions; ++i) {
+                const prompt = `Generate ${selectedLevel} level pogamming question in C++ ${i}`;
+                const response = execSync(`curl http://localhost:11434/api/generate -d '{"model": "llama3.2", "prompt": "${prompt}", "stream": false}'`, { encoding: 'utf8' });
+                const responseObject = JSON.parse(response);
+                const question = responseObject.response;
+
+                const fileName = path.join(rootPath, `${selectedLevel}_Ques_${i}.cpp`);
+                const fileContent = `// ${question}\n#include <iostream>\nusing namespace std;\n\nint main() {\n    return 0;\n}`;
+
+                fs.writeFileSync(fileName, fileContent);
+            }
+
+            vscode.window.showInformationMessage(`${numQuestions} ${selectedLevel} question file(s) created successfully.`);
+        } else {
+            vscode.window.showErrorMessage('No workspace folder is open.');
+        }
+    });
+
+    context.subscriptions.push(createFilesCommand);
+    context.subscriptions.push(amaCommand);
 }
 
-// This method is called when your extension is deactivated
-function deactivate() {}
+function deactivate() {
+    // Perform any cleanup necessary when the extension is deactivated
+}
 
 module.exports = {
-	activate,
-	deactivate
-}
+    activate,
+    deactivate
+};
