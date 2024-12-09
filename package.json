@@ -1,8 +1,9 @@
 {
   "name": "themzway",
   "displayName": "themzway",
-  "description": "Test",
-  "version": "0.0.1",
+  "publisher": "themzway",
+  "description": "This is a VS Code extension that helps you practice programming questions.",
+  "version": "3.2.3",
   "engines": {
     "vscode": "^1.95.0"
   },
