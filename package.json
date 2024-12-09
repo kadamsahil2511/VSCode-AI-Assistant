@@ -12,10 +12,20 @@
   "activationEvents": [],
   "main": "./extension.js",
   "contributes": {
-    "commands": [{
-      "command": "themzway.ama",
-      "title": "Ask me anything"
-    }]
+    "commands": [
+      {
+        "command": "themzway.createFiles",
+        "title": "Create Files"
+      }
+      {
+        "command": "themzway.practice",
+        "title": "Practice Programming Questions"
+      },
+      {
+        "command": "themzway.ama",
+        "title": "Ask Me Anything"
+      }
+    ]
   },
   "scripts": {
     "lint": "eslint .",
