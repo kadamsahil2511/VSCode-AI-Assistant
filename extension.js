@@ -18,7 +18,7 @@ function activate(context) {
             const rootPath = workspaceFolders[0].uri.fsPath;
 
             for (let i = 1; i <= numFiles; ++i) {
-                const fileName = path.join(rootPath, `Ques_${i}.cpp`);
+                const fileName = path.join(rootPath, `Ques_${i}.java`);
                 const fileContent = `#include <iostream>\nusing namespace std;\n\nint main() {\n    return 0;\n}`;
 
                 fs.writeFileSync(fileName, fileContent);
@@ -104,7 +104,7 @@ function activate(context) {
                     fs.mkdirSync(folderPath);
                 }
 
-                const fileName = path.join(folderPath, 'solution.cpp');
+                const fileName = path.join(folderPath, 'solution.java');
                 const fileContent = `/*
 Problem Statement:
 ${prompt}
