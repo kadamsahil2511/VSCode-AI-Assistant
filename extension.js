@@ -55,7 +55,7 @@ function activate(context) {
 
             for (let i = 1; i <= numQuestions; ++i) {
                 const prompt = `Generate ${selectedLevel} level programming question in C++ ${i}`;
-                const response = execSync(`curl http://localhost:11434/api/generate -d '{"model": "llama3.2", "prompt": "${prompt}", "stream": false}'`, { encoding: 'utf8' });
+                const response = execSync(`curl http://localhost:11434/api/generate -d '{"model": "gemma3:4b", "prompt": "${prompt}", "stream": false}'`, { encoding: 'utf8' });
                 const responseObject = JSON.parse(response);
                 const question = responseObject.response;
 
@@ -88,13 +88,13 @@ function activate(context) {
             try {
                 // Get summary for folder name
                 const summaryPrompt = `Give a 3 word summary of this, separated by underscores: ${prompt}`;
-                const summaryResponse = execSync(`curl http://localhost:11434/api/generate -d '{"model": "llama3.2", "prompt": "${summaryPrompt}", "stream": false}'`, { encoding: 'utf8' });
+                const summaryResponse = execSync(`curl http://localhost:11434/api/generate -d '{"model": "gemma3:4b", "prompt": "${summaryPrompt}", "stream": false}'`, { encoding: 'utf8' });
                 const summaryObject = JSON.parse(summaryResponse);
                 const folderName = summaryObject.response.trim().replace(/[^a-zA-Z_]/g, '');
 
                 // Get code solution
                 const codePrompt = `Write a complete code solution for this problem: ${prompt}`;
-                const codeResponse = execSync(`curl http://localhost:11434/api/generate -d '{"model": "llama3.2", "prompt": "${codePrompt}", "stream": false}'`, { encoding: 'utf8' });
+                const codeResponse = execSync(`curl http://localhost:11434/api/generate -d '{"model": "gemma3:4b", "prompt": "${codePrompt}", "stream": false}'`, { encoding: 'utf8' });
                 const codeObject = JSON.parse(codeResponse);
                 const code = codeObject.response;
 
@@ -104,7 +104,7 @@ function activate(context) {
                     fs.mkdirSync(folderPath);
                 }
 
-                const fileName = path.join(folderPath, 'solution.java');
+                const fileName = path.join(folderPath, 'solution.md');
                 const fileContent = `/*
 Problem Statement:
 ${prompt}
